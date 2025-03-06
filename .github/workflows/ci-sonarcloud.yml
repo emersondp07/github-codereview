@@ -6,23 +6,34 @@ on:
       - dev
 
 jobs:
-  check-application:
+  # run-ci:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       node: [22.x]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Use Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: ${{ matrix.node }}
+
+  #     - name: Install dependencies
+  #       run: npm install
+
+  #     - name: Install pnpm
+  #       run: npm install -g pnpm
+
+  #     - name: Run test
+  #       run: pnpm test
+  sonarqube:
+    name: SonarQube
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [22.x]
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js
-        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Run test
-        run: pnpm test
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
